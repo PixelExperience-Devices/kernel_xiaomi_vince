@@ -2124,8 +2124,6 @@ cpu_util_freq(int cpu, struct sched_walt_cpu_load *walt_load)
 
 extern unsigned long
 boosted_cpu_util(int cpu, struct sched_walt_cpu_load *walt_load);
-#endif
-
 extern unsigned int capacity_margin_freq;
 
 static inline unsigned long
@@ -2137,6 +2135,8 @@ add_capacity_margin(unsigned long cpu_capacity, int cpu)
 	cpu_capacity /= SCHED_CAPACITY_SCALE;
 	return cpu_capacity;
 }
+
+#endif /* CONFIG_SMP */
 
 static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta)
 {
