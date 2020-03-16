@@ -227,7 +227,6 @@ struct genfs {
 /* The policy database */
 struct policydb {
 	int mls_enabled;
-	int android_netlink_route;
 	int android_netlink_getneigh;
 
 	/* symbol tables */
@@ -315,7 +314,6 @@ extern int policydb_write(struct policydb *p, void *fp);
 #define PERM_SYMTAB_SIZE 32
 
 #define POLICYDB_CONFIG_MLS    1
-#define POLICYDB_CONFIG_ANDROID_NETLINK_ROUTE    (1 << 31)
 #define POLICYDB_CONFIG_ANDROID_NETLINK_GETNEIGH (1 << 30)
 
 /* the config flags related to unknown classes/perms are bits 2 and 3 */

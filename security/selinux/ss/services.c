@@ -70,7 +70,6 @@
 #include "ebitmap.h"
 #include "audit.h"
 
-int selinux_android_netlink_route;
 int selinux_android_netlink_getneigh;
 int selinux_policycap_netpeer;
 int selinux_policycap_openperm;
@@ -1992,8 +1991,6 @@ static void security_load_policycaps(void)
 						  POLICYDB_CAPABILITY_OPENPERM);
 	selinux_policycap_alwaysnetwork = ebitmap_get_bit(&policydb.policycaps,
 						  POLICYDB_CAPABILITY_ALWAYSNETWORK);
-
-	selinux_android_netlink_route = policydb.android_netlink_route;
 	selinux_android_netlink_getneigh = policydb.android_netlink_getneigh;
 	selinux_nlmsg_init();
 }
