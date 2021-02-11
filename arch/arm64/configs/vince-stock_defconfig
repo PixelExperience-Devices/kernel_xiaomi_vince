@@ -39,7 +39,13 @@ CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
 CONFIG_IRQ_WORK=y
 CONFIG_BUILDTIME_EXTABLE_SORT=y
 CONFIG_THREAD_INFO_IN_TASK=y
+<<<<<<< HEAD:arch/arm64/configs/vince-stock_defconfig
 
+=======
+CONFIG_KLAPSE=y
+CONFIG_UCLAMP_TASK=y
+CONFIG_UCLAMP_TASK_GROUP=y
+>>>>>>> 01bb4c7a2529 (defconfig: Enable UClamp.):arch/arm64/configs/vince-perf_defconfig
 #
 # General setup
 #
