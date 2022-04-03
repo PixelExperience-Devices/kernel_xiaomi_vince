@@ -66,10 +66,6 @@ write_boot;
 #block=vendor_boot;
 #is_slot_device=1;
 #ramdisk_compression=auto;
-<<<<<<< HEAD
-#patch_vbmeta_flag=auto;
-=======
->>>>>>> 24ee5ed18ace (AnyKernel3: drop vbmeta flag)
 
 # reset for vendor_boot patching
 #reset_ak;
@@ -80,7 +76,3 @@ write_boot;
 
 #flash_boot;
 ## end vendor_boot install
-<<<<<<< HEAD
-
-=======
->>>>>>> 24ee5ed18ace (AnyKernel3: drop vbmeta flag)
