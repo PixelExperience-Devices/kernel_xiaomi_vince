@@ -471,7 +471,19 @@ if [ -f version ]; then
   ui_printfile version;
   ui_print " ";
 fi;
-ui_print " " "AnyKernel3 by osm0sis @ xda-developers" " ";
+ui_print "========================================";
+ui_print "|   █▀█ █░░ ▄▀█ ▀█▀ █ █▄░█ █░█ █▀▄▀█   |";
+ui_print "|   █▀▀ █▄▄ █▀█ ░█░ █ █░▀█ █▄█ █░▀░█   |";
+ui_print "|======================================|";
+ui_print "|  Kernel         : Platinum-Kernel    |";
+ui_print "|  Version        : v1.0               |";
+ui_print "|  Device         : Redmi 5 Plus       |";
+ui_print "|  Linux version  : 4.9.y              |";
+ui_print "|  Compiler       : Atom Clang 15.0.0  |";
+ui_print "|  Maintainer     : rk134              |";
+ui_print "|======================================|";
+ui_print "|AnyKernel3 by osm0sis @xda-developers.|";
+ui_print "========================================";
 $BB grep -oE 'AK_BASE.*' META-INF/com/google/android/updater-script >&2;
 ui_print " ";
 
@@ -498,4 +510,11 @@ if [ "$(file_getprop anykernel.sh do.cleanup)" == 1 ]; then
   cleanup;
 fi;
 
-ui_print " " " " "Done!";
+ui_print "==========================================";
+ui_print "|       \    /      /\      \    /       |";
+ui_print "|        \  /      /  \      \  /        |";
+ui_print "|         ||      /----\      ||         |";
+ui_print "|         ||     /      \     ||         |";
+ui_print "|========================================|";
+ui_print "| Platinum Kernel Installed Successfully.|";
+ui_print "==========================================";
