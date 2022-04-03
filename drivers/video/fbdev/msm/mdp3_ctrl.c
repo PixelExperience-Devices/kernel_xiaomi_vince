@@ -303,6 +303,9 @@ void vsync_notify_handler(void *arg)
 {
 	struct mdp3_session_data *session = (struct mdp3_session_data *)arg;
 
+	if (!session)
+		return;
+
 	session->vsync_time = ktime_get();
 	MDSS_XLOG(ktime_to_ms(session->vsync_time));
 	sysfs_notify_dirent(session->vsync_event_sd);
@@ -1054,8 +1057,7 @@ static int mdp3_ctrl_on(struct msm_fb_data_type *mfd)
 	mdp3_session->first_commit = true;
 	if (mfd->panel_info->panel_dead)
 		mdp3_session->esd_recovery = true;
-
-		mdp3_session->status = 1;
+	mdp3_session->status = 1;
 
 	mdp3_ctrl_pp_resume(mfd);
 

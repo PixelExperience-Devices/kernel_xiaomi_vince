@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2019, 2021 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -672,7 +672,7 @@ static void handle_sys_init_done(enum hal_command_response cmd, void *data)
 	struct msm_vidc_cb_cmd_done *response = data;
 	struct msm_vidc_core *core;
 	struct vidc_hal_sys_init_done *sys_init_msg;
-	u32 index;
+	u32 index, i;
 
 	if (!IS_HAL_SYS_CMD(cmd)) {
 		dprintk(VIDC_ERR, "%s - invalid cmd\n", __func__);
@@ -718,6 +718,20 @@ static void handle_sys_init_done(enum hal_command_response cmd, void *data)
 	memcpy(core->capabilities, sys_init_msg->capabilities,
 		sys_init_msg->codec_count * sizeof(struct msm_vidc_capability));
 
+	 /* override capabilities for sdm450 */
+	if (core->resources.target_version == 1) {
+		for (i = 0; i < VIDC_MAX_SESSIONS; i++) {
+			if (core->capabilities[i].width.max > HD_WIDTH)
+				core->capabilities[i].width.max = HD_WIDTH;
+			if (core->capabilities[i].height.max > HD_WIDTH)
+				core->capabilities[i].height.max = HD_WIDTH;
+
+			core->capabilities[i].mbs_per_frame.max =
+					NUM_MBS_PER_FRAME(HD_WIDTH, HD_HEIGHT);
+			core->resources.max_inst_count =
+					MAX_SUPPORTED_INSTANCES;
+		}
+	}
 	dprintk(VIDC_DBG,
 		"%s: supported_codecs[%d]: enc = %#x, dec = %#x\n",
 		__func__, core->codec_count, core->enc_codec_supported,
@@ -3856,17 +3870,20 @@ int msm_comm_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb)
 	 * Don't queue if:
 	 * 1) Hardware isn't ready (that's simple)
 	 */
-	defer = defer ?: inst->state != MSM_VIDC_START_DONE;
+	if (!defer)
+		defer = (inst->state != MSM_VIDC_START_DONE);
 
 	/*
 	 * 2) The client explicitly tells us not to because it wants this
 	 * buffer to be batched with future frames.  The batch size (on both
 	 * capabilities) is completely determined by the client.
 	 */
-	defer = defer ?: vbuf && vbuf->flags & V4L2_MSM_BUF_FLAG_DEFER;
+	if (!defer)
+		defer = (vbuf && vbuf->flags & V4L2_MSM_BUF_FLAG_DEFER);
 
 	/* 3) If we're in batch mode, we must have full batches of both types */
-	defer = defer ?: batch_mode && (!output_count || !capture_count);
+	if (!defer)
+		defer = (batch_mode && (!output_count || !capture_count));
 
 	if (defer) {
 		dprintk(VIDC_DBG, "Deferring queue of %pK\n", vb);

@@ -814,6 +814,7 @@ struct device {
 	struct dev_pin_info	*pins;
 #endif
 #ifdef CONFIG_GENERIC_MSI_IRQ
+	raw_spinlock_t		msi_lock;
 	struct list_head	msi_list;
 #endif
 
@@ -963,6 +964,16 @@ static inline void device_disable_async_suspend(struct device *dev)
 static inline bool device_async_suspend_enabled(struct device *dev)
 {
 	return !!dev->power.async_suspend;
+}
+
+static inline bool device_pm_not_required(struct device *dev)
+{
+	return dev->power.no_pm;
+}
+
+static inline void device_set_pm_not_required(struct device *dev)
+{
+	dev->power.no_pm = true;
 }
 
 static inline void dev_pm_syscore_device(struct device *dev, bool val)

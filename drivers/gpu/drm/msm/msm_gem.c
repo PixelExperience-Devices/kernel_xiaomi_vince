@@ -72,6 +72,19 @@ static void sync_for_device(struct msm_gem_object *msm_obj)
 	}
 }
 
+static void sync_for_cpu(struct msm_gem_object *msm_obj)
+{
+	struct device *dev = msm_obj->base.dev->dev;
+
+	if (get_dma_ops(dev) && IS_ENABLED(CONFIG_ARM64)) {
+		dma_sync_sg_for_cpu(dev, msm_obj->sgt->sgl,
+			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+	} else {
+		dma_unmap_sg(dev, msm_obj->sgt->sgl,
+			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+	}
+}
+
 /* allocate pages from VRAM carveout, used when no IOMMU: */
 static struct page **get_pages_vram(struct drm_gem_object *obj,
 		int npages)
@@ -154,6 +167,13 @@ static void put_pages(struct drm_gem_object *obj)
 
 	if (msm_obj->pages) {
 		if (msm_obj->sgt) {
+			/* For non-cached buffers, ensure the new
+			 * pages are clean because display controller,
+			 * GPU, etc. are not coherent:
+			 */
+			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+				sync_for_cpu(msm_obj);
+
 			sg_free_table(msm_obj->sgt);
 			kfree(msm_obj->sgt);
 		}
@@ -1027,7 +1047,7 @@ struct drm_gem_object *msm_gem_new(struct drm_device *dev,
 
 	ret = msm_gem_new_impl(dev, size, flags, NULL, &obj);
 	if (ret)
-		goto fail;
+		return ERR_PTR(ret);
 
 	if (use_pages(obj)) {
 		ret = drm_gem_object_init(dev, obj, size);
@@ -1067,7 +1087,7 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
 	ret = msm_gem_new_impl(dev, size, MSM_BO_WC, dmabuf->resv, &obj);
 	mutex_unlock(&dev->struct_mutex);
 	if (ret)
-		goto fail;
+		return ERR_PTR(ret);
 
 	drm_gem_private_object_init(dev, obj, size);
 
@@ -1076,8 +1096,4 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
 	msm_obj->pages = NULL;
 
 	return obj;
-
-fail:
-	drm_gem_object_unreference_unlocked(obj);
-	return ERR_PTR(ret);
 }
