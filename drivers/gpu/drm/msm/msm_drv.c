@@ -1469,16 +1469,6 @@ static int msm_release(struct inode *inode, struct file *filp)
 		kfree(node);
 	}
 
-<<<<<<< HEAD
-=======
-	msm_preclose(dev, file_priv);
-
-       /**
-	* Handle preclose operation here for removing fb's whose
-	* refcount > 1. This operation is not triggered from upstream
-	* drm as msm_driver does not support DRIVER_LEGACY feature.
-	*/
->>>>>>> 1646417c2feee0be9fc70cd0e3ef22184ec38715
 	ret = drm_release(inode, filp);
 	filp->private_data = NULL;
 end:
