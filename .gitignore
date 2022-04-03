@@ -126,3 +126,12 @@ Android.bp
 
 # Object directory
 out/
+
+# Toolchains
+clang/
+los-4.9-32/
+los-4.9-64/
+
+# anykernel3
+AnyKernel3/zI*
+AnyKernel3/Platinum*
