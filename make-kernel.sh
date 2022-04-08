@@ -114,7 +114,7 @@ function error_sticker() {
 function compile() {
 DATE=`date`
 BUILD_START=$(date +"%s")
-make O=out ARCH=arm64 platinum-perf_defconfig
+make O=out ARCH=arm64 platinum_defconfig
 make -j$(nproc --all) O=out \
                 ARCH=arm64 \
 			    CC="ccache clang" \
@@ -131,7 +131,7 @@ function make_flashable() {
 cd $ZIP_DIR
 dir
 rm -rf zIm*
-rm -rf Coral*
+rm -rf Platinum*
 cp $KERN_IMG $ZIP_DIR/zImage
 if [ "$TYPE" == "stable" ]; then
     zip -r9 Platinum-Kernel-v1-[STABLE].zip * -x .git README.md *placeholder
