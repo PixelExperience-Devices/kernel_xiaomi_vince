@@ -134,11 +134,11 @@ rm -rf zIm*
 rm -rf Platinum*
 cp $KERN_IMG $ZIP_DIR/zImage
 if [ "$TYPE" == "stable" ]; then
-    zip -r9 Platinum-Kernel-v1-[STABLE].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v2-[STABLE].zip * -x .git README.md *placeholder
 elif [ "$TYPE" == "beta" ]; then
-    zip -r9 Platinum-Kernel-v1-[BETA].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v2-[BETA].zip * -x .git README.md *placeholder
 else
-    zip -r9 Platinum-Kernel-v1-[TEST].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v2-[TEST].zip * -x .git README.md *placeholder
 fi
 ZIP=$(echo *.zip)
 tg_pushzip
