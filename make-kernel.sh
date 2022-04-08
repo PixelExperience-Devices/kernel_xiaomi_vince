@@ -3,7 +3,7 @@
 # Copyright (C) 2021-2022 rk134
 # Thanks to eun0115, starlight5234 and ghostmaster69-dev
 export DEVICE="VINCE"
-export CONFIG="platinum-perf_defconfig"
+export CONFIG="platinum_defconfig"
 export TC_PATH="$HOME/toolchains"
 PATH="${PWD}/clang/bin:$PATH"
 PATH="${PWD}/los-4.9-32/bin:$PATH"
