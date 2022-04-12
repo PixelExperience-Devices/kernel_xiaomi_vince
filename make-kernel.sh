@@ -13,6 +13,7 @@ export KERNEL_DIR=$(pwd)
 export ATOM_COMPILE="yes"
 export KBUILD_BUILD_USER="rk134"
 export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
+export KERNEL_USE_CCACHE=1
 
 # FUNCTIONS
 
