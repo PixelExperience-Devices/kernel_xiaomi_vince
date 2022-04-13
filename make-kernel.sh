@@ -10,7 +10,7 @@ PATH="${PWD}/los-4.9-32/bin:$PATH"
 PATH="${PWD}/los-4.9-64/bin:$PATH"
 export ZIP_DIR="$(pwd)/AnyKernel3"
 export KERNEL_DIR=$(pwd)
-export ATOM_COMPILE="yes"
+export CLANG_COMPILE="azure"
 export KBUILD_BUILD_USER="rk134"
 export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 export KERNEL_USE_CCACHE=1
@@ -77,11 +77,16 @@ function tg_sendinfo() {
 function clone_tc() {
 [ -d ${TC_PATH} ] || mkdir ${TC_PATH}
 
-if [ "$AZURE_COMPILE" == "no" ]; then
+if [ "$CLANG_COMPILE" == "proton" ]; then
 	git clone --depth=1 https://github.com/kdrag0n/proton-clang.git ${TC_PATH}/clang
 	export PATH="${TC_PATH}/clang/bin:$PATH"
 	export STRIP="${TC_PATH}/clang/aarch64-linux-gnu/bin/strip"
 	export COMPILER="Clang 14.0.0"
+elif [ "$CLANG_COMPILE" == "azure" ]; then
+    git clone --depth=1 https://gitlab.com/Panchajanya1999/azure-clang clang --depth=1
+    git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
+    git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
+    export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 else
     git clone --depth=1 https://gitlab.com/ElectroPerf/atom-x-clang clang --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
@@ -89,6 +94,7 @@ else
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 fi
 }
+
 # Send Updates
 function tg_sendinfo() {
 	curl -s "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
@@ -135,11 +141,11 @@ rm -rf zIm*
 rm -rf Platinum*
 cp $KERN_IMG $ZIP_DIR/zImage
 if [ "$TYPE" == "stable" ]; then
-    zip -r9 Platinum-Kernel-v2-[STABLE].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v3-[STABLE].zip * -x .git README.md *placeholder
 elif [ "$TYPE" == "beta" ]; then
-    zip -r9 Platinum-Kernel-v2-[BETA].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v3-[BETA].zip * -x .git README.md *placeholder
 else
-    zip -r9 Platinum-Kernel-v2-[TEST].zip * -x .git README.md *placeholder
+    zip -r9 Platinum-Kernel-v3-[TEST].zip * -x .git README.md *placeholder
 fi
 ZIP=$(echo *.zip)
 tg_pushzip

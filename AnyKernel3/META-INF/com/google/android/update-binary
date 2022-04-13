@@ -476,10 +476,10 @@ ui_print "|   █▀█ █░░ ▄▀█ ▀█▀ █ █▄░█
 ui_print "|   █▀▀ █▄▄ █▀█ ░█░ █ █░▀█ █▄█ █░▀░█   |";
 ui_print "|======================================|";
 ui_print "|  Kernel         : Platinum-Kernel    |";
-ui_print "|  Version        : v1.0               |";
+ui_print "|  Version        : v3.0               |";
 ui_print "|  Device         : Redmi 5 Plus       |";
 ui_print "|  Linux version  : 4.9.y              |";
-ui_print "|  Compiler       : Atom Clang 15.0.0  |";
+ui_print "|  Compiler       : Azure Clang 15.0.0 |";
 ui_print "|  Maintainer     : rk134              |";
 ui_print "|======================================|";
 ui_print "|AnyKernel3 by osm0sis @xda-developers.|";
