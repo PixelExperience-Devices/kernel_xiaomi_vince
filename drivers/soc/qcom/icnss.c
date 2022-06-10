@@ -5198,11 +5198,13 @@ static struct platform_driver icnss_driver = {
 		.pm = &icnss_pm_ops,
 		.owner = THIS_MODULE,
 		.of_match_table = icnss_dt_match,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 };
 
 static int __init icnss_initialize(void)
 {
+#ifdef CONFIG_IPC_LOGGING
 	icnss_ipc_log_context = ipc_log_context_create(NUM_LOG_PAGES,
 						       "icnss", 0);
 	if (!icnss_ipc_log_context)
@@ -5212,6 +5214,7 @@ static int __init icnss_initialize(void)
 						       "icnss_long", 0);
 	if (!icnss_ipc_log_long_context)
 		icnss_pr_err("Unable to create log long context\n");
+#endif
 
 	return platform_driver_register(&icnss_driver);
 }
