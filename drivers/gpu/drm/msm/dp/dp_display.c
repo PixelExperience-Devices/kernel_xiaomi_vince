@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -22,6 +23,7 @@
 #include <linux/of_irq.h>
 #include <linux/hdcp_qseecom.h>
 
+#include <drm/drm_client.h>
 #include "sde_connector.h"
 
 #include "msm_drv.h"
@@ -97,6 +99,8 @@ static const struct of_device_id dp_dt_match[] = {
 	{.compatible = "qcom,dp-display"},
 	{}
 };
+
+static void dp_display_update_hdcp_info(struct dp_display_private *dp);
 
 static bool dp_display_framework_ready(struct dp_display_private *dp)
 {
@@ -464,11 +468,19 @@ static int dp_display_send_hpd_notification(struct dp_display_private *dp,
 		bool hpd)
 {
 	int ret = 0;
+	static int bootsplash_count;
 
 	dp->dp_display.is_connected = hpd;
 
-	if (!dp_display_framework_ready(dp))
+	if (!dp_display_framework_ready(dp)) {
+		pr_err("%s: dp display framework not ready\n", __func__);
+		if (!dp->dp_display.is_bootsplash_en && !bootsplash_count) {
+			dp->dp_display.is_bootsplash_en = true;
+			bootsplash_count++;
+			drm_client_dev_register(dp->dp_display.drm_dev);
+		}
 		return ret;
+	}
 
 	dp->aux->state |= DP_STATE_NOTIFICATION_SENT;
 
@@ -780,7 +792,7 @@ static int dp_display_usbpd_attention_cb(struct device *dev)
 		return -ENODEV;
 	}
 
-	if (dp->usbpd->hpd_high && dp->usbpd->hpd_irq)
+	if (dp->usbpd->hpd_irq && dp->usbpd->hpd_high && !dp->power_on)
 		drm_dp_cec_irq(dp->aux->drm_aux);
 
 	if (dp->usbpd->hpd_irq && dp->usbpd->hpd_high &&
@@ -1131,6 +1143,11 @@ static int dp_display_post_enable(struct dp_display *dp_display)
 
 	if (atomic_read(&dp->aborted)) {
 		pr_err("aborted\n");
+		goto end;
+	}
+
+	if (dp->dp_display.is_bootsplash_en) {
+		dp->dp_display.is_bootsplash_en = false;
 		goto end;
 	}
 

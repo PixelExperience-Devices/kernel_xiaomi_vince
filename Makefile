@@ -1,6 +1,6 @@
 VERSION = 4
 PATCHLEVEL = 9
-SUBLEVEL = 317
+SUBLEVEL = 319
 EXTRAVERSION =
 NAME = Roaring Lionus
 
@@ -761,7 +761,11 @@ OPT_FLAGS	:= -mllvm -polly \
 ifeq ($(call clang-ifversion, -ge, 1400, y), y)
 OPT_FLAGS       += -mllvm -polly-reschedule=1 \
                    -mllvm -polly-loopfusion-greedy=1 \
-                   -mllvm -polly-postopts=1
+                   -mllvm -polly-postopts=1 \
+                   -mllvm -polly-num-threads=0 \
+                   -mllvm -polly-omp-backend=LLVM \
+                   -mllvm -polly-scheduling=dynamic \
+                   -mllvm -polly-scheduling-chunksize=1
 else
 OPT_FLAGS       += -mllvm -polly-opt-fusion=max
 endif
@@ -855,8 +859,13 @@ endif
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
 
 ifeq ($(ld-name),lld)
+ifdef CONFIG_LTO_CLANG
 KBUILD_LDFLAGS += --lto-O3
 LDFLAGS += --lto-O3
+else
+KBUILD_LDFLAGS += -O3
+LDFLAGS += -O3
+endif
 endif
 
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
